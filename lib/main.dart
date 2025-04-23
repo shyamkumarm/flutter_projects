@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_projects/NativeLauncher.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,9 +34,10 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
-    setState(() {
+    NativeLauncher.launchNativeActivity();
+    /*setState(() {
         _counter++;
-    });
+    });*/
   }
 
   @override
