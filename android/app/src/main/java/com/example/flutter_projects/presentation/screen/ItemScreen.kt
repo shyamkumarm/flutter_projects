@@ -1,6 +1,8 @@
 package com.example.flutter_projects.presentation.screen
 
+import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -25,20 +27,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.example.flutter_projects.domain.User
 import com.example.flutter_projects.presentation.MyUserDataViewModel
 import org.koin.androidx.compose.koinViewModel
+import java.io.File
 
 
 @Composable
 fun UserInputScreen(
     modifier: Modifier,
-    viewModel: MyUserDataViewModel = koinViewModel<MyUserDataViewModel>()
+    viewModel: MyUserDataViewModel = koinViewModel<MyUserDataViewModel>(),
+     context: Context = LocalContext.current
 ) {
 
     var name by remember { mutableStateOf("") }
@@ -46,17 +54,15 @@ fun UserInputScreen(
     var phone by remember { mutableStateOf("") }
     var signature by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
+    var updatedImage by remember { mutableStateOf(false) }
 
 
-
-    val viewState  = viewModel.userData.collectAsStateWithLifecycle()
+    val viewState = viewModel.userData.collectAsStateWithLifecycle()
 
     val cameraLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
-            if (it != null) {
-                val imageBitmap = it
-                // You can save it or show it
-            }
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
+            updatedImage = isSuccess
+            Log.d("shyam","isSuccess $isSuccess")
         }
 
     Column(
@@ -67,7 +73,6 @@ fun UserInputScreen(
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-
         Text("User Form", fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -97,10 +102,25 @@ fun UserInputScreen(
             modifier = Modifier
                 .size(150.dp)
                 .background(Color.LightGray)
-                .clickable { },
+                .clickable {
+                   createImageUri(context).run {
+                       photoUri = this
+                       cameraLauncher.launch(this)
+                    }
+
+                },
             contentAlignment = Alignment.Center
         ) {
-            Text("Tap to capture", color = Color.DarkGray)
+            if (updatedImage) {
+                AsyncImage(
+                    model = photoUri,
+                    contentDescription = "Captured Image",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Text("Tap to capture", color = Color.DarkGray)
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -109,7 +129,7 @@ fun UserInputScreen(
             viewModel.save(
                 User(
                     name = name, address = address, phoneNumber = phone.toLong(),
-                    profilePic = ""
+                    profilePic = photoUri.toString()
                 )
             )
         }) {
@@ -118,5 +138,15 @@ fun UserInputScreen(
     }
 
 
+}
+
+
+fun createImageUri(context: Context): Uri {
+    val imageFile = File(context.filesDir, "profile_${System.currentTimeMillis()}.jpg")
+    return FileProvider.getUriForFile(
+        context,
+        "${context.packageName}.fileProvider",
+        imageFile
+    )
 }
 
