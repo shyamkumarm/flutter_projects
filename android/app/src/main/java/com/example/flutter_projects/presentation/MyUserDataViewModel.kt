@@ -12,7 +12,7 @@ class MyUserDataViewModel(private val useCase: UserDataCase) : ViewModel() {
 
 
     private val _userdata =
-        MutableStateFlow<UserUiState>(UserUiState.Loading)
+        MutableStateFlow<UserUiState>(UserUiState.Init)
     val userData = _userdata.asStateFlow()
 
 

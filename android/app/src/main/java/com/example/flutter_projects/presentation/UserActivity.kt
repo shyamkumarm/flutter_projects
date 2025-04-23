@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.flutter_projects.presentation.screen.UserInputScreen
-import com.gallery.myapplication.ui.theme.MyApplicationTheme
+import com.example.flutter_projects.ui.theme.MyApplicationTheme
 
 class UserActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

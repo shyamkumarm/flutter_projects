@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
 class UserDataCase(private val mediaRepo: IUserData) {
-    fun invoke(user: User) = flow<Any> {
+    fun invoke(user: User) = flow {
         val savedResult = mediaRepo.saveUserData(user = user).fold(
             onSuccess = { user ->
                 user
