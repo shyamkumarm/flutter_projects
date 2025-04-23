@@ -16,12 +16,12 @@
     </queries>
 
     <application
-        android:name="${applicationName}"
+        android:name=".MyApplication"
         android:icon="@mipmap/ic_launcher"
         android:theme="@style/Theme.AppCompat"
         android:label="flutter_projects">
         <activity
-            android:name=".UserActivity"
+            android:name=".presentation.UserActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
