@@ -1,4 +1,4 @@
-package com.gallery.myapplication.di
+package com.example.flutter_projects.di
 
 import com.example.flutter_projects.presentation.MyUserDataViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel

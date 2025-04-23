@@ -1,14 +1,25 @@
 package com.example.flutter_projects.data
 
-import android.content.Context
+import com.example.flutter_projects.data.database.UserDao
 import com.example.flutter_projects.domain.User
+import com.example.flutter_projects.domain.db.UserDatabaseModel
+import java.util.Date
 
-class UserDataSource(private val application: Context) {
+class UserDataSource(private val userDao: UserDao) {
 
 
-    fun saveDataSource(data:User): Result<User> {
-        return Result.runCatching {
-            data
+    suspend fun saveDataSource(data: User): Result<User> {
+        return try {
+
+            userDao.insert(
+                UserDatabaseModel(
+                    name = data.name, address = data.address, phoneNumber = data.phoneNumber, profilePic =
+                        data.profilePic, createdOn = Date(System.currentTimeMillis())
+                )
+            )
+            Result.success(data)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

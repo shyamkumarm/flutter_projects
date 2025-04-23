@@ -29,11 +29,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.flutter_projects.domain.User
+import com.example.flutter_projects.presentation.MyUserDataViewModel
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun UserInputScreen(
-    modifier: Modifier
+    modifier: Modifier,
+    viewModel: MyUserDataViewModel = koinViewModel<MyUserDataViewModel>()
 ) {
 
     var name by remember { mutableStateOf("") }
@@ -43,16 +48,21 @@ fun UserInputScreen(
     var photoUri by remember { mutableStateOf<Uri?>(null) }
 
 
-    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
-        if (it != null) {
-            val imageBitmap = it
-            // You can save it or show it
-        }
-    }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp),
+    val viewState  = viewModel.userData.collectAsStateWithLifecycle()
+
+    val cameraLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
+            if (it != null) {
+                val imageBitmap = it
+                // You can save it or show it
+            }
+        }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
 
@@ -64,10 +74,18 @@ fun UserInputScreen(
         OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Name") })
 
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(value = address, onValueChange = { address = it }, label = { Text("Address") })
+        OutlinedTextField(
+            value = address,
+            onValueChange = { address = it },
+            label = { Text("Address") })
 
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(value = phone, onValueChange = { phone = it }, label = { Text("Phone Number") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone))
+        OutlinedTextField(
+            value = phone,
+            onValueChange = { phone = it },
+            label = { Text("Phone Number") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
         Text("Signature", fontWeight = FontWeight.Medium)
@@ -75,10 +93,11 @@ fun UserInputScreen(
         Spacer(modifier = Modifier.height(16.dp))
         Text("Profile Picture", fontWeight = FontWeight.Medium)
 
-        Box(modifier = Modifier
-            .size(150.dp)
-            .background(Color.LightGray)
-            .clickable {  },
+        Box(
+            modifier = Modifier
+                .size(150.dp)
+                .background(Color.LightGray)
+                .clickable { },
             contentAlignment = Alignment.Center
         ) {
             Text("Tap to capture", color = Color.DarkGray)
@@ -87,7 +106,12 @@ fun UserInputScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = {
-            // Save or submit form logic
+            viewModel.save(
+                User(
+                    name = name, address = address, phoneNumber = phone.toLong(),
+                    profilePic = ""
+                )
+            )
         }) {
             Text("Submit")
         }

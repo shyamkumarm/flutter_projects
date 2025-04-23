@@ -26,8 +26,7 @@ class UserActivity : AppCompatActivity() {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun Greeting(modifier: Modifier = Modifier.padding(16.dp)) {
-    // val viewModel = koinViewModel()
+fun Greeting(modifier: Modifier) {
     MyApplicationTheme {
         UserInputScreen(modifier)
     }

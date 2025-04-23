@@ -3,7 +3,7 @@ package com.example.flutter_projects
 import android.app.Application
 import com.example.flutter_projects.di.dataModules
 import com.example.flutter_projects.di.domainModules
-import com.gallery.myapplication.di.presentationModules
+import com.example.flutter_projects.di.presentationModules
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
