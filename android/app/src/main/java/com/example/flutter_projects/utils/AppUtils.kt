@@ -3,17 +3,14 @@ package com.example.flutter_projects.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Paint.Cap
-import android.graphics.Paint.Join
-import android.graphics.Paint.Style
-import android.graphics.Path
+import android.graphics.Picture
 import android.net.Uri
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
+import android.provider.MediaStore
 import androidx.core.content.FileProvider
 import androidx.core.graphics.createBitmap
 import java.io.File
 import java.io.FileOutputStream
+
 
 object AppUtils {
 
@@ -27,41 +24,29 @@ object AppUtils {
     }
 
 
-    fun getSignatureBitmap(
-        path: Path,
-        width: Int,
-        height: Int,
-        strokeWidths: Float = 4f,
-        strokeColor: Int = Color.Black.toArgb(),
-        bgColor: Int = Color.White.toArgb()
-    ): Bitmap {
-        val bitmap = createBitmap(width, height, Bitmap.Config.RGB_565)
-        val canvas = Canvas(bitmap)
-
-        // Optional background
-        canvas.drawColor(bgColor)
-
-        val paint = android.graphics.Paint().apply {
-            color = strokeColor
-            style = Style.STROKE
-            strokeWidth = strokeWidths
-            isAntiAlias = true
-            strokeCap = Cap.ROUND
-            strokeJoin = Join.ROUND
-        }
-
-        canvas.drawPath(path, paint)
-
-        return bitmap
+    fun uriBitmap(context: Context, uri: Uri):Bitmap{
+        return MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
     }
 
-
-    fun saveBitmapToFile(context: Context, bitmap: Bitmap): Uri {
+    fun saveBitmapToFile(context: Context, path: Picture): Uri {
         val file = File(context.filesDir, "signature_${System.currentTimeMillis()}.png")
         val outputStream = FileOutputStream(file)
         outputStream.use {
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+            createBitmapFromPicture(path).run {
+                compress(Bitmap.CompressFormat.PNG, 50, outputStream)
+                 recycle()
+            }
+            it.flush()
         }
-        return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+        return FileProvider.getUriForFile(context, "${context.packageName}.fileProvider", file)
+    }
+
+
+    private fun createBitmapFromPicture(picture: Picture): Bitmap {
+        val bitmap = createBitmap(picture.width, picture.height)
+        val canvas = Canvas(bitmap)
+        canvas.drawColor(android.graphics.Color.WHITE)
+        canvas.drawPicture(picture)
+        return bitmap
     }
 }

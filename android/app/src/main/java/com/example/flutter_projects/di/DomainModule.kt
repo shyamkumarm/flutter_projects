@@ -5,7 +5,7 @@ import org.koin.dsl.module
 
 
 private val domainModule = module {
-    single { UserDataCase(get()) }
+    single { UserDataCase(get(), get()) }
 
 }
 

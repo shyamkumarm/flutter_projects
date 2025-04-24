@@ -14,7 +14,7 @@ class UserDataSource(private val userDao: UserDao) {
             userDao.insert(
                 UserDatabaseModel(
                     name = data.name, address = data.address, phoneNumber = data.phoneNumber, profilePic =
-                        data.profilePic, createdOn = Date(System.currentTimeMillis())
+                        data.profilePic.toString(), signaturePic = data.signaturePath.toString() ,createdOn = Date(System.currentTimeMillis())
                 )
             )
             Result.success(data)

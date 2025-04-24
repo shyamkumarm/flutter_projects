@@ -24,7 +24,7 @@ class MyUserDataViewModel(private val useCase: UserDataCase) : ViewModel() {
                     _userdata.emit(UserUiState.Success(user as User))
                 }
             } catch (e: Exception) {
-                _userdata.emit(UserUiState.Error(e.message ?: "Some thing wrong or No Data"))
+                _userdata.emit(UserUiState.Error(e.message.toString()))
             }
 
         }

@@ -1,7 +1,8 @@
 package com.example.flutter_projects.presentation.screen
 
 import android.content.Context
-import android.net.Uri
+import android.graphics.Picture
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,7 +20,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
@@ -32,12 +35,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.draw
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -54,6 +65,8 @@ import com.example.flutter_projects.utils.AppUtils
 import org.koin.androidx.compose.koinViewModel
 
 
+var drawScope: DrawScope? = null
+
 @Composable
 fun UserInputScreen(
     modifier: Modifier,
@@ -61,24 +74,15 @@ fun UserInputScreen(
     context: Context = LocalContext.current
 ) {
 
-    var name by remember { mutableStateOf("") }
-    var address by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var signature by remember { mutableStateOf("") }
-    var photoUri by remember { mutableStateOf<Uri?>(null) }
-    var updatedImage by remember { mutableStateOf(false) }
-    var pathState by remember { mutableStateOf(Path()) }
+    var user by remember { mutableStateOf(User("", "", "", null, null, null)) }
 
-    fun clearValues() {
-        name = ""
-        address = ""
-        phone = ""
-        signature = ""
-        photoUri = null
-    }
+    var updatedImage by remember { mutableStateOf(false) }
+    val focusRequester by remember { mutableStateOf(FocusRequester()) }
+    val picture by remember { mutableStateOf(Picture()) }
 
 
     val viewState by viewModel.userData.collectAsStateWithLifecycle()
+    val scrollState = rememberScrollState()
 
     val cameraLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
@@ -89,6 +93,7 @@ fun UserInputScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -97,7 +102,8 @@ fun UserInputScreen(
         when (viewState) {
             is UserUiState.Success -> {
                 ShowMessage(context, "saved success")
-                clearValues()
+                Log.d("Data", "${(viewState as UserUiState.Success).savedItem}")
+                focusRequester.requestFocus()
             }
 
             is UserUiState.Error -> {
@@ -112,19 +118,26 @@ fun UserInputScreen(
 
         Text("User Form", fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Name") })
+        Spacer(
+            modifier = Modifier
+                .height(16.dp)
+        )
+        OutlinedTextField(
+            modifier = Modifier.focusRequester(focusRequester),
+            value = user.name,
+            onValueChange = { user = user.copy(name = it) },
+            label = { Text("Name") })
 
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
-            value = address,
-            onValueChange = { address = it },
+            value = user.address,
+            onValueChange = { user = user.copy(address = it) },
             label = { Text("Address") })
 
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
-            value = phone,
-            onValueChange = { phone = it },
+            value = user.phoneNumber,
+            onValueChange = { user = user.copy(phoneNumber = it) },
             label = { Text("Phone Number") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
         )
@@ -132,15 +145,13 @@ fun UserInputScreen(
         Spacer(modifier = Modifier.height(16.dp))
         Text("Signature", fontWeight = FontWeight.Medium)
 
+
         SignatureCanvas(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(300.dp)
-                .border(1.dp, Color.Gray),
-            onSignatureDrawn = { pathState = it }
+                .border(1.dp, Color.Gray), picture = picture
         )
-
-
 
         Spacer(modifier = Modifier.height(16.dp))
         Text("Profile Picture", fontWeight = FontWeight.Medium)
@@ -151,7 +162,7 @@ fun UserInputScreen(
                 .background(Color.LightGray)
                 .clickable {
                     AppUtils.createImageUri(context).run {
-                        photoUri = this
+                        user.profilePic = this
                         cameraLauncher.launch(this)
                     }
 
@@ -160,7 +171,7 @@ fun UserInputScreen(
         ) {
             if (updatedImage) {
                 AsyncImage(
-                    model = photoUri,
+                    model = user.profilePic,
                     contentDescription = "Captured Image",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
@@ -174,10 +185,7 @@ fun UserInputScreen(
 
         Button(onClick = {
             viewModel.save(
-                User(
-                    name = name, address = address, phoneNumber = phone.toLong(),
-                    profilePic = photoUri.toString()
-                )
+                user.copy(path = picture)
             )
         }) {
             Text("Submit")
@@ -208,13 +216,34 @@ fun ShowMessage(context: Context, message: String) {
 fun SignatureCanvas(
     modifier: Modifier = Modifier,
     strokeWidth: Float = 4f,
-    strokeColor: Color = Color.White,
-    onSignatureDrawn: (Path) -> Unit = {},
+    strokeColor: Color = Color.Blue,
+    picture: Picture
 ) {
     var lastPoint by remember { mutableStateOf<Offset?>(null) }
     val path by remember { mutableStateOf(Path()) }
-    val canvas = Canvas(
+    Canvas(
         modifier = modifier
+            .clipToBounds()
+            .drawWithCache {
+                // Example that shows how to redirect rendering to an Android Picture and then
+                // draw the picture into the original destination
+                val width = this.size.width.toInt()
+                val height = this.size.height.toInt()
+                onDrawWithContent {
+                    val pictureCanvas =
+                        androidx.compose.ui.graphics.Canvas(
+                            picture.beginRecording(
+                                width,
+                                height
+                            )
+                        )
+                    draw(this, this.layoutDirection, pictureCanvas, this.size) {
+                        this@onDrawWithContent.drawContent()
+                    }
+                    picture.endRecording()
+                    drawIntoCanvas { canvas -> canvas.nativeCanvas.drawPicture(picture) }
+                }
+            }
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragStart = { offset ->
@@ -227,7 +256,6 @@ fun SignatureCanvas(
                             path.lineTo(point.x, point.y)
                         }
                         lastPoint = point
-                        onSignatureDrawn(path)
                     },
                     onDragEnd = {
                         lastPoint = null
@@ -245,8 +273,9 @@ fun SignatureCanvas(
             style = Stroke(width = strokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
         )
     }
-    Button(onClick = { path.reset()
-        lastPoint = Offset(0f,0f)
+    Button(onClick = {
+        path.reset()
+        lastPoint = Offset(0f, 0f)
     }) {
         Text("Clear")
     }

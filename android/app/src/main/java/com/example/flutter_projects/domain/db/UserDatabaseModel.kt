@@ -13,7 +13,8 @@ data class UserDatabaseModel(
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "address") val address: String,
     @ColumnInfo(name = "profilePic") val profilePic: String,
-    @ColumnInfo(name = "phoneNumber") val phoneNumber: Long,
+    @ColumnInfo(name = "signaturePic") val signaturePic: String,
+    @ColumnInfo(name = "phoneNumber") val phoneNumber: String,
     @ColumnInfo(name = "created_on") val createdOn: Date,
 ) {
     fun getFormat(): String = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(createdOn)

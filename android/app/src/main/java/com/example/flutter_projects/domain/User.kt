@@ -1,11 +1,15 @@
 package com.example.flutter_projects.domain
 
-import androidx.compose.runtime.Immutable
 
-@Immutable
+import android.graphics.Picture
+import android.net.Uri
+
+
 data class User(
-    val name: String,
-    val address: String,
-    val phoneNumber: Long,
-    val profilePic: String,
+    var name: String,
+    var address: String,
+    var phoneNumber: String,
+    var profilePic: Uri?,
+    var path: Picture?,
+    var signaturePath:Uri?
 )
