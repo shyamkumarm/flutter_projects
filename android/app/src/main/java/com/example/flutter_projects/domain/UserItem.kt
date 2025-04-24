@@ -1,8 +1,7 @@
 package com.example.flutter_projects.domain
+import com.example.flutter_projects.domain.db.UserDatabaseModel
 
-import androidx.compose.runtime.Immutable
 
-@Immutable
 data class UserItem(
-    val userList: List<User>
+    val userList: List<UserDatabaseModel>
 )

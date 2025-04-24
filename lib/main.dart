@@ -1,69 +1,63 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_projects/UserViewModel.dart';
+
+import 'package:path/path.dart' as path;
+import 'package:image/image.dart' as img; // Import the image package
+import 'package:flutter/foundation.dart'; // For ChangeNotifier
 import 'package:flutter_projects/NativeLauncher.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => UserViewmodel())],
+      child: const UserDataApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class UserDataApp extends StatelessWidget {
+  const UserDataApp({super.key});
 
   void _incrementCounter() {
     NativeLauncher.launchNativeActivity();
-    /*setState(() {
-        _counter++;
-    });*/
   }
 
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
-      appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(widget.title),
-      ),
-      body: Center(
-         child: Column(
-           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+    return MaterialApp(
+      title: 'User Data App',
+      theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Inter'),
+      home: Scaffold(
+        appBar: AppBar(title: Text('User List')),
+        body: Consumer<UserViewmodel>(
+          builder: (context, viewModel, child) {
+            return RefreshIndicator(
+              onRefresh: () => viewModel.load(),
+              child: ListView.builder(
+                itemCount: viewModel.persons.length,
+                itemBuilder: (context, index) {
+                  final person = viewModel.persons[0];
+                  return ListTile(
+                    title: Text(person["name"]),
+                    subtitle: Text(person["address"]),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () => viewModel.removePerson(),
+                    ),
+                  );
+                },
+              )
+            );
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () => _incrementCounter(),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
+

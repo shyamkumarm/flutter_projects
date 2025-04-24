@@ -23,4 +23,16 @@ class UserDataCase(private val mediaRepo: IUserData, private val context: Contex
         emit(savedResult)
     }.flowOn(Dispatchers.IO)
 
+
+
+    fun getUser() = flow {
+        val savedResult = mediaRepo.getUser().fold(
+            onSuccess = { userList ->
+                userList
+            }, onFailure = { exception ->
+                exception.message ?: "Some thing wrong with database"
+            })
+        emit(savedResult)
+    }.flowOn(Dispatchers.IO)
+
 }

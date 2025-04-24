@@ -11,3 +11,14 @@ class NativeLauncher {
     }
   }
 }
+
+class UserChannel {
+  static const _channel = MethodChannel('com.example.users');
+
+  static Future<List<Map<String, dynamic>>> getUsers() async {
+    final List<dynamic> users = await _channel.invokeMethod('getUsers');
+    return  users.map((user) {
+      return Map<String, dynamic>.from(user);
+    }).toList();
+  }
+}
