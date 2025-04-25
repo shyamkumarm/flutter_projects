@@ -31,25 +31,51 @@ class UserDataApp extends StatelessWidget {
       darkTheme: ThemeData.dark(),
       home: Scaffold(
         appBar: AppBar(title: Text('User List')),
-        body: Consumer<UserViewmodel>(
-          builder: (context, viewModel, child) {
-            return RefreshIndicator(
-              onRefresh: () => viewModel.load(),
-              child: ListView.builder(
-                itemCount: viewModel.persons.length,
-                itemBuilder: (context, index) {
-                  final person = viewModel.persons[index];
-                  return UserListScreenItem(user: person);
-                },
-              )
-            );
-          },
-        ),
+        body: UserListScreen(),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () => launchAndroidActivity(),
         ),
       ),
+    );
+  }
+}
+
+
+class UserListScreen extends StatefulWidget {
+  const UserListScreen({super.key});
+
+  @override
+  _UserListScreenState createState() => _UserListScreenState();
+}
+
+class _UserListScreenState extends State<UserListScreen> {
+  bool _initialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      Provider.of<UserViewmodel>(context, listen: false).load();
+      _initialized = true;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<UserViewmodel>(
+      builder: (context, viewModel, child) {
+        return RefreshIndicator(
+          onRefresh: () => viewModel.load(),
+          child: ListView.builder(
+            itemCount: viewModel.persons.length,
+            itemBuilder: (context, index) {
+              final person = viewModel.persons[index];
+              return UserListScreenItem(user: person);
+            },
+          ),
+        );
+      },
     );
   }
 }
