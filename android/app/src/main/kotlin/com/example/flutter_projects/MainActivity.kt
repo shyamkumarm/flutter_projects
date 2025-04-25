@@ -16,7 +16,7 @@ import org.koin.android.ext.android.inject
 class MainActivity : FlutterActivity() {
 
     private val userChannel = "com.example.users"
-    private val launchUserChannel = "com.example/native"
+    private val launchUserChannel = "com.example.launch"
     val userDataCase: UserDataCase by inject()
     val job by lazy { CoroutineScope(Dispatchers.IO) }
 
@@ -36,7 +36,6 @@ class MainActivity : FlutterActivity() {
                 result.notImplemented()
             }
         }
-
 
 
         MethodChannel(

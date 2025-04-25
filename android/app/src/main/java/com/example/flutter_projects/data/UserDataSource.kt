@@ -4,6 +4,7 @@ import com.example.flutter_projects.data.database.UserDao
 import com.example.flutter_projects.domain.User
 import com.example.flutter_projects.domain.UserItem
 import com.example.flutter_projects.domain.db.UserDatabaseModel
+import java.io.File
 import java.util.Date
 
 class UserDataSource(private val userDao: UserDao) {
@@ -43,7 +44,15 @@ class UserDataSource(private val userDao: UserDao) {
 
     suspend fun deleteDataSource(id: Int): Result<Int> {
         return try {
-            userDao.delete(id)
+            userDao.run { // clean image files
+                getUserById(id)?.let {
+                    listOf(it.profilePic, it.signaturePic).forEach {
+                        File(it).delete()
+                    }
+                }
+                delete(id)
+            }
+
             Result.success(id)
         } catch (e: Exception) {
             Result.failure(e)

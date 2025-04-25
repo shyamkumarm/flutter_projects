@@ -27,7 +27,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 @Composable
 fun SignatureCanvas(
     modifier: Modifier = Modifier,
-    strokeWidth: Float = 4f,
+    strokeWidth: Float = 10f,
     strokeColor: Color = Color.Blue,
     picture: Picture
 ) {

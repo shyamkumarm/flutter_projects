@@ -11,8 +11,8 @@ interface UserDao {
     @Query("SELECT * FROM UserDatabaseModel ORDER BY created_on ASC")
     suspend fun getAll(): List<UserDatabaseModel>
 
-    @Query("SELECT * FROM UserDatabaseModel where phoneNumber =:phoneNumber")
-    suspend fun getUserByPhoneNumber(phoneNumber: Int): UserDatabaseModel?
+    @Query("SELECT * FROM UserDatabaseModel where id =:id")
+    suspend fun getUserById(id: Int): UserDatabaseModel?
 
     @Insert(onConflict =  OnConflictStrategy.IGNORE)
     suspend fun insert(notes: UserDatabaseModel)

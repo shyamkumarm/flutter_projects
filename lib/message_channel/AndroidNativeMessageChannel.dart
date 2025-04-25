@@ -1,11 +1,11 @@
 import 'package:flutter/services.dart';
 
 class NativeLauncher {
-  static const platform = MethodChannel('com.example/native');
+  static const launch = MethodChannel('com.example.launch');
 
   static Future<void> launchNativeActivity() async {
     try {
-      await platform.invokeMethod('launchUserActivity');
+      await launch.invokeMethod('launchUserActivity');
     } catch (e) {
       print("Error launching activity: $e");
     }

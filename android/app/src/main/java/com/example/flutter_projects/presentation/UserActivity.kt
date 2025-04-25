@@ -17,8 +17,7 @@ class UserActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyApplicationTheme {
-
-                Greeting(
+                UserFormScreen(
                     modifier = Modifier.padding(16.dp)
                 )
             }
@@ -28,7 +27,7 @@ class UserActivity : AppCompatActivity() {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun Greeting(modifier: Modifier) {
+fun UserFormScreen(modifier: Modifier) {
     MyApplicationTheme {
         UserInputScreen(modifier)
     }

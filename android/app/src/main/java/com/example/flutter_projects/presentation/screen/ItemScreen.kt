@@ -13,12 +13,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -26,6 +28,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -100,26 +103,37 @@ fun UserInputScreen(
                 ShowLoading()
             }
         }
+        val uiModifier = Modifier
+            .fillMaxWidth()
 
-        Text("User Form", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        TextButton(onClick = { /* just for decoration*/ }) {
+            Text(
+                text = "User Profile",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
 
         Spacer(
             modifier = Modifier
                 .height(16.dp)
         )
         OutlinedTextField(
+            modifier = uiModifier,
             value = user.name,
             onValueChange = { user = user.copy(name = it) },
             label = { Text("Name") })
 
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
+            modifier = uiModifier,
             value = user.address,
             onValueChange = { user = user.copy(address = it) },
             label = { Text("Address") })
 
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
+            modifier = uiModifier,
             value = user.phoneNumber,
             onValueChange = { user = user.copy(phoneNumber = it) },
             label = { Text("Phone Number") },
@@ -127,47 +141,50 @@ fun UserInputScreen(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Signature", fontWeight = FontWeight.Medium)
+        Row(modifier = uiModifier, verticalAlignment = Alignment.CenterVertically) {
+            Text("Profile Picture", fontWeight = FontWeight.Medium)
+            Spacer(modifier = Modifier.width(16.dp))
+            Box(
+                modifier = Modifier
+                    .size(150.dp)
+                    .background(Color.LightGray)
+                    .clickable {
+                        AppUtils.createImageUri(context).run {
+                            user.profilePic = this.first
+                            cameraLauncher.launch(this.second)
+                        }
 
-
-        SignatureCanvas(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-                .border(1.dp, Color.Gray), picture = picture
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("Profile Picture", fontWeight = FontWeight.Medium)
-
-        Box(
-            modifier = Modifier
-                .size(150.dp)
-                .background(Color.LightGray)
-                .clickable {
-                    AppUtils.createImageUri(context).run {
-                        user.profilePic = this.first
-                        cameraLauncher.launch(this.second)
-                    }
-
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            if (updatedImage) {
-                AsyncImage(
-                    model = user.profilePic,
-                    contentDescription = "Captured Image",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                Text("Tap to capture", color = Color.DarkGray)
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                if (updatedImage) {
+                    AsyncImage(
+                        model = user.profilePic,
+                        contentDescription = "Captured Image",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Text("Tap to capture", color = Color.DarkGray)
+                }
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = {
+        Text(modifier = uiModifier, text = "Signature", fontWeight = FontWeight.Medium)
+        Spacer(
+            modifier = Modifier
+                .height(5.dp)
+        )
+        SignatureCanvas(
+            modifier = uiModifier
+                .height(100.dp)
+                .border(1.dp, Color.Gray), picture = picture
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(modifier = uiModifier, onClick = {
             viewModel.save(
                 user.copy(path = picture)
             )
@@ -175,8 +192,6 @@ fun UserInputScreen(
             Text("Submit")
         }
     }
-
-
 }
 
 
@@ -191,9 +206,9 @@ fun ShowLoading() {
 @Composable
 fun ShowMessage(context: Context, message: String) {
     LaunchedEffect(true) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
-    if(context is Activity){
+    if (context is Activity) {
         context.finish()
     }
 }

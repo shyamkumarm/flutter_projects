@@ -1,14 +1,9 @@
-import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:flutter_projects/UserListScreenItem.dart';
-import 'package:flutter_projects/UserViewModel.dart';
-
-import 'package:path/path.dart' as path;
-import 'package:image/image.dart' as img; // Import the image package
-import 'package:flutter/foundation.dart'; // For ChangeNotifier
-import 'package:flutter_projects/NativeLauncher.dart';
-import 'package:provider/provider.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_projects/message_channel/AndroidNativeMessageChannel.dart';
+import 'package:flutter_projects/view/UserListScreenItem.dart';
+import 'package:flutter_projects/viewmodel/UserViewModel.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(
@@ -22,7 +17,7 @@ void main() {
 class UserDataApp extends StatelessWidget {
   const UserDataApp({super.key});
 
-  void _incrementCounter() {
+  void launchAndroidActivity() {
     NativeLauncher.launchNativeActivity();
   }
 
@@ -52,7 +47,7 @@ class UserDataApp extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
-          onPressed: () => _incrementCounter(),
+          onPressed: () => launchAndroidActivity(),
         ),
       ),
     );

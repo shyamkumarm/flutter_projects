@@ -1,8 +1,7 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_projects/UserViewModel.dart';
+import 'package:flutter_projects/viewmodel/UserViewModel.dart';
 import 'package:provider/provider.dart';
 
 class UserListScreenItem extends StatelessWidget {
@@ -30,7 +29,7 @@ class UserListScreenItem extends StatelessWidget {
                 Row(
                   children: [
                     CircleAvatar(
-                      radius: 30,
+                      radius: 40,
                       backgroundImage: FileImage(File(user["profilePic"])),
                     ),
                     const SizedBox(width: 16.0),
@@ -43,6 +42,7 @@ class UserListScreenItem extends StatelessWidget {
                             style: const TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 18.0,
+                              color: Colors.black87,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -51,7 +51,7 @@ class UserListScreenItem extends StatelessWidget {
                             user["address"],
                             style: TextStyle(
                               fontSize: 14.0,
-                              color: Colors.grey[600],
+                              color: Colors.black87,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -59,34 +59,43 @@ class UserListScreenItem extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () {
-                        Provider.of<UserViewmodel>(context, listen: false)
-                            .deleteUser(  user["id"]);
+                      icon: const Icon(Icons.delete,color: Colors.black38),
+                      onPressed: () =>  {
+                        Provider.of<UserViewmodel>(
+                          context,
+                          listen: false,
+                        ).deleteUser(user["id"])
                       },
                     ),
                   ],
                 ),
-                const SizedBox(height: 12.0),
                 Row(
                   children: [
-                    Icon(Icons.phone, color: Colors.grey[600], size: 16),
+                    Icon(Icons.phone, color: Colors.black87, size: 16),
                     const SizedBox(width: 4.0),
-                    Text(user["phoneNumber"]),
+                    Text(
+                      user["phoneNumber"],
+                      style: TextStyle(fontSize: 14.0, color: Colors.black54, fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(width:50.0),
+                    const Text(
+                      'Signature:',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(width: 4.0),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.file(
+                        File(user["signaturePic"]),
+                        height: 50.0,
+                        width: 75.0,
+                        fit: BoxFit.fitWidth,
+                      ),
+                    ),
                   ],
-                ),
-                const SizedBox(height: 8.0),
-                const Text(
-                  'Signature:',
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                ),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image.file(File(user["signaturePic"]),
-                    height: 50.0,
-                    width: double.infinity,
-                    fit: BoxFit.contain,
-                  ),
                 ),
               ],
             ),
