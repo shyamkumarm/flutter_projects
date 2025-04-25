@@ -53,7 +53,6 @@ class UserListScreenItem extends StatelessWidget {
                               fontSize: 14.0,
                               color: Colors.black87,
                             ),
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
