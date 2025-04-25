@@ -54,8 +54,6 @@ import com.example.flutter_projects.utils.AppUtils
 import org.koin.androidx.compose.koinViewModel
 
 
-var drawScope: DrawScope? = null
-
 @Composable
 fun UserInputScreen(
     modifier: Modifier,
