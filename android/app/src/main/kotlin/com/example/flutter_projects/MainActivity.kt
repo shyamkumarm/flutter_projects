@@ -61,6 +61,13 @@ class MainActivity : FlutterActivity() {
                     }
 
                 }
+            } else if (call.method == "deleteUser") {
+                job.launch {
+                   val id =  call.argument<Int>("id") ?: 0
+                    userDataCase.deleteUser(id).collect {
+                        result.success(it)
+                    }
+                }
             } else {
                 result.notImplemented()
             }

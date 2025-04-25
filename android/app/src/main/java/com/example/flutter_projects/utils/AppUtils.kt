@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Picture
 import android.net.Uri
-import android.provider.MediaStore
 import androidx.core.content.FileProvider
 import androidx.core.graphics.createBitmap
 import java.io.File
@@ -14,31 +13,28 @@ import java.io.FileOutputStream
 
 object AppUtils {
 
-    fun createImageUri(context: Context): Uri {
+    fun createImageUri(context: Context): Pair<String, Uri> {
         val imageFile = File(context.filesDir, "profile_${System.currentTimeMillis()}.jpg")
-        return FileProvider.getUriForFile(
-            context,
-            "${context.packageName}.fileProvider",
-            imageFile
-        )
+        return Pair<String, Uri>(
+            imageFile.absolutePath, FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.fileProvider",
+                imageFile
+            ))
     }
 
 
-    fun uriBitmap(context: Context, uri: Uri):Bitmap{
-        return MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
-    }
-
-    fun saveBitmapToFile(context: Context, path: Picture): Uri {
+    fun saveBitmapToFile(context: Context, path: Picture): String {
         val file = File(context.filesDir, "signature_${System.currentTimeMillis()}.png")
         val outputStream = FileOutputStream(file)
         outputStream.use {
             createBitmapFromPicture(path).run {
                 compress(Bitmap.CompressFormat.PNG, 50, outputStream)
-                 recycle()
+                recycle()
             }
             it.flush()
         }
-        return FileProvider.getUriForFile(context, "${context.packageName}.fileProvider", file)
+        return file.absolutePath
     }
 
 

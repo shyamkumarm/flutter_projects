@@ -35,4 +35,15 @@ class UserDataCase(private val mediaRepo: IUserData, private val context: Contex
         emit(savedResult)
     }.flowOn(Dispatchers.IO)
 
+
+    fun deleteUser(id:Int) = flow {
+        val deletedResult = mediaRepo.deleteUser(id).fold(
+            onSuccess = { id ->
+                id
+            }, onFailure = { exception ->
+                exception.message ?: "Some thing wrong with database"
+            })
+        emit(deletedResult)
+    }.flowOn(Dispatchers.IO)
+
 }

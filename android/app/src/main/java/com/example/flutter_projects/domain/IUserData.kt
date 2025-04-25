@@ -4,4 +4,5 @@ interface IUserData {
 
     suspend fun saveUserData(user: User): Result<User>
     suspend fun getUser(): Result<UserItem>
+    suspend fun deleteUser(id:Int): Result<Int>
 }

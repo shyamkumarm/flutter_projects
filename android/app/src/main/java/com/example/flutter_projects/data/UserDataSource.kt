@@ -18,8 +18,8 @@ class UserDataSource(private val userDao: UserDao) {
                     address = data.address,
                     phoneNumber = data.phoneNumber,
                     profilePic =
-                        data.profilePic.toString(),
-                    signaturePic = data.signaturePath.toString(),
+                        data.profilePic ?: "",
+                    signaturePic = data.signaturePath ?: "",
                     createdOn = Date(System.currentTimeMillis())
                 )
             )
@@ -35,6 +35,16 @@ class UserDataSource(private val userDao: UserDao) {
             val userList = userDao.getAll(
             )
             Result.success(UserItem(userList))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+
+    suspend fun deleteDataSource(id: Int): Result<Int> {
+        return try {
+            userDao.delete(id)
+            Result.success(id)
         } catch (e: Exception) {
             Result.failure(e)
         }

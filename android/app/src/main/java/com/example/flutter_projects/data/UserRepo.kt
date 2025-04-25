@@ -14,4 +14,8 @@ class UserRepo(private val source: UserDataSource) : IUserData {
     override suspend fun getUser(): Result<UserItem> {
         return source.saveDataSource()
     }
+
+    override suspend fun deleteUser(id: Int):Result<Int> {
+       return source.deleteDataSource(id)
+    }
 }

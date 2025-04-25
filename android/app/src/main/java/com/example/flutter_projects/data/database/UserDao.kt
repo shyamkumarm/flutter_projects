@@ -1,6 +1,5 @@
 package com.example.flutter_projects.data.database
 
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -21,7 +20,7 @@ interface UserDao {
     @Update
     suspend fun update(note: UserDatabaseModel)
 
-    @Delete
-    suspend fun delete(note: UserDatabaseModel)
+    @Query("DELETE FROM UserDatabaseModel WHERE id = :id")
+    suspend fun delete(id: Int)
 
 }

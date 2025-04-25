@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_projects/UserListScreenItem.dart';
 import 'package:flutter_projects/UserViewModel.dart';
 
 import 'package:path/path.dart' as path;
@@ -7,6 +8,7 @@ import 'package:image/image.dart' as img; // Import the image package
 import 'package:flutter/foundation.dart'; // For ChangeNotifier
 import 'package:flutter_projects/NativeLauncher.dart';
 import 'package:provider/provider.dart';
+import 'package:device_preview/device_preview.dart';
 
 void main() {
   runApp(
@@ -29,6 +31,9 @@ class UserDataApp extends StatelessWidget {
     return MaterialApp(
       title: 'User Data App',
       theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Inter'),
+      locale: DevicePreview.locale(context),
+      builder: DevicePreview.appBuilder,
+      darkTheme: ThemeData.dark(),
       home: Scaffold(
         appBar: AppBar(title: Text('User List')),
         body: Consumer<UserViewmodel>(
@@ -38,15 +43,8 @@ class UserDataApp extends StatelessWidget {
               child: ListView.builder(
                 itemCount: viewModel.persons.length,
                 itemBuilder: (context, index) {
-                  final person = viewModel.persons[0];
-                  return ListTile(
-                    title: Text(person["name"]),
-                    subtitle: Text(person["address"]),
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () => viewModel.removePerson(),
-                    ),
-                  );
+                  final person = viewModel.persons[index];
+                  return UserListScreenItem(user: person);
                 },
               )
             );

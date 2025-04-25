@@ -12,8 +12,9 @@ class UserViewmodel extends ChangeNotifier {
   }
 
 
-  void removePerson() {
-    notifyListeners();
+  void deleteUser(int id) async {
+    await UserChannel.deleteUser(id);
+     load(); // reload
   }
 
 

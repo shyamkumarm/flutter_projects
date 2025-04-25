@@ -1,5 +1,6 @@
 package com.example.flutter_projects.presentation.screen
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Picture
 import android.util.Log
@@ -33,8 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.ContentScale
@@ -64,7 +63,6 @@ fun UserInputScreen(
     var user by remember { mutableStateOf(User("", "", "", null, null, null)) }
 
     var updatedImage by remember { mutableStateOf(false) }
-    val focusRequester by remember { mutableStateOf(FocusRequester()) }
     val picture by remember { mutableStateOf(Picture()) }
 
 
@@ -90,7 +88,7 @@ fun UserInputScreen(
             is UserUiState.Success -> {
                 ShowMessage(context, "saved success")
                 Log.d("Data", "${(viewState as UserUiState.Success).savedItem}")
-                focusRequester.requestFocus()
+
             }
 
             is UserUiState.Error -> {
@@ -110,7 +108,6 @@ fun UserInputScreen(
                 .height(16.dp)
         )
         OutlinedTextField(
-            modifier = Modifier.focusRequester(focusRequester),
             value = user.name,
             onValueChange = { user = user.copy(name = it) },
             label = { Text("Name") })
@@ -149,8 +146,8 @@ fun UserInputScreen(
                 .background(Color.LightGray)
                 .clickable {
                     AppUtils.createImageUri(context).run {
-                        user.profilePic = this
-                        cameraLauncher.launch(this)
+                        user.profilePic = this.first
+                        cameraLauncher.launch(this.second)
                     }
 
                 },
@@ -195,6 +192,9 @@ fun ShowLoading() {
 fun ShowMessage(context: Context, message: String) {
     LaunchedEffect(true) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+    if(context is Activity){
+        context.finish()
     }
 }
 

@@ -10,11 +10,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.flutter_projects.presentation.screen.UserInputScreen
 import com.example.flutter_projects.ui.theme.MyApplicationTheme
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class UserActivity : AppCompatActivity() {
-
-    val viewModel by viewModel<MyUserDataViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -21,4 +21,12 @@ class UserChannel {
       return Map<String, dynamic>.from(user);
     }).toList();
   }
+
+  static Future<void> deleteUser(int id) async {
+    try {
+       await _channel.invokeMethod('deleteUser',{"id":id});
+    } catch (e) {
+      print("Error db query: $e");
+    }
+  }
 }
