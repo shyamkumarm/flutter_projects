@@ -23,8 +23,8 @@ app/
 
 ## 📂 Project Structure (Flutter)
 ```
-app/
- ├── message_channel/      # Data layer - Communicate to native models (AndroidNativeMessageChannel - Manages channels)   
+lib/
+ ├── message_channel/      # Data layer - Communicate to native models (AndroidNativeMessageChannel - Manages channels) 
  ├── viewmodel/            # UserViewmodel
  ├── view/                 # UserListScreenItem.dart - Screen components
  └── main.dart             #  Entry point of the flutter app
@@ -54,7 +54,7 @@ app/
 * **User Interface:** Implement a basic, user-friendly UI for both the native Android form and the Flutter user list screen.
 * **Performance** Ensure smooth and responsive performance in both the native Android and Flutter components.
 * **Error Handling:** Implement robust error handling for all operations, including data input, database operations, and communication between Flutter and native.
-* **Testing:** Include basic unit tests for the native Android (Kotlin) code, especially for the data access layer (Room).  Consider widget tests for the Flutter UI.
+* **Testing:** Include basic unit tests for the native Android (Kotlin) code, especially for the data access layer (Room)
 * **Security & Encryptions:** Handle user data, especially the signature and profile picture, securely.Consider storage permissions and data privacy.
 * **Device Compatibility & Landscape:** The application should function correctly on a range of Android devices, also should supports (tablets) landscape mode .
 
