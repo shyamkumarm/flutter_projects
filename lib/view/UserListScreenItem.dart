@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_projects/viewmodel/UserViewModel.dart';
 import 'package:provider/provider.dart';
 
+import '../data/User.dart';
+
 class UserListScreenItem extends StatelessWidget {
-  final Map<String, dynamic> user;
+  final User user;
 
   const UserListScreenItem({super.key, required this.user});
 
@@ -30,7 +32,7 @@ class UserListScreenItem extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 40,
-                      backgroundImage: FileImage(File(user["profilePic"])),
+                      backgroundImage: FileImage(File(user.profilePic)),
                     ),
                     const SizedBox(width: 16.0),
                     Expanded(
@@ -38,7 +40,7 @@ class UserListScreenItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            user["name"],
+                            user.name,
                             style: const TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 18.0,
@@ -48,7 +50,7 @@ class UserListScreenItem extends StatelessWidget {
                           ),
                           const SizedBox(height: 4.0),
                           Text(
-                            user["address"],
+                            user.address,
                             style: TextStyle(
                               fontSize: 14.0,
                               color: Colors.black87,
@@ -63,7 +65,7 @@ class UserListScreenItem extends StatelessWidget {
                         Provider.of<UserViewmodel>(
                           context,
                           listen: false,
-                        ).deleteUser(user["id"])
+                        ).deleteUser(user.id)
                       },
                     ),
                   ],
@@ -73,7 +75,7 @@ class UserListScreenItem extends StatelessWidget {
                     Icon(Icons.phone, color: Colors.black87, size: 16),
                     const SizedBox(width: 4.0),
                     Text(
-                      user["phoneNumber"],
+                      user.phoneNumber,
                       style: TextStyle(fontSize: 14.0, color: Colors.black54, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(width:50.0),
@@ -88,7 +90,7 @@ class UserListScreenItem extends StatelessWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
                       child: Image.file(
-                        File(user["signaturePic"]),
+                        File(user.signaturePic ?? ""),
                         height: 50.0,
                         width: 75.0,
                         fit: BoxFit.fitWidth,

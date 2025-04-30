@@ -30,7 +30,9 @@ class UserDataApp extends StatelessWidget {
       builder: DevicePreview.appBuilder,
       darkTheme: ThemeData.dark(),
       home: Scaffold(
-        appBar: AppBar(title: Text('User List')),
+        appBar: AppBar(title: Center(child: Text('Users List',textAlign: TextAlign.center)),titleTextStyle: TextStyle(color: Color(
+            0xFFFFFFFF),fontWeight: FontWeight.w400,fontSize: 20.0,),  backgroundColor: Color(
+            0xFF19132E)),
         body: UserListScreen(),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
@@ -46,19 +48,21 @@ class UserListScreen extends StatefulWidget {
   const UserListScreen({super.key});
 
   @override
-  _UserListScreenState createState() => _UserListScreenState();
+  State createState() => _UserListScreenState();
 }
 
 class _UserListScreenState extends State<UserListScreen> {
-  bool _initialized = false;
+
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_initialized) {
-      Provider.of<UserViewmodel>(context, listen: false).load();
-      _initialized = true;
-    }
+      Provider.of<UserViewmodel>(context, listen: true).load();
   }
 
   @override
